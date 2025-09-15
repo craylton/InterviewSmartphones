@@ -36,7 +36,7 @@ builder.Services.AddCors(options =>
 // Add SPA services for React
 builder.Services.AddSpaStaticFiles(configuration =>
 {
-    configuration.RootPath = "ClientApp/build";
+    configuration.RootPath = "../web/ClientApp/build";
 });
 
 var app = builder.Build();
@@ -61,7 +61,7 @@ app.MapControllers();
 app.UseSpaStaticFiles();
 app.UseSpa(spa =>
 {
-    spa.Options.SourcePath = "ClientApp";
+    spa.Options.SourcePath = "../web/ClientApp";
 
     if (app.Environment.IsDevelopment())
     {
