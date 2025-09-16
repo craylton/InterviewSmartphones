@@ -3,7 +3,7 @@ using InterviewSmartphones.Console.Models;
 
 namespace InterviewSmartphones.Console.Services;
 
-public class ProductService(IProductClient productClient, ILogger logger) : IProductService
+public class ProductService(IProductClient productClient, ILogger logger)
 {
     private readonly IProductClient _productClient = productClient;
     private readonly ILogger _logger = logger;
@@ -66,7 +66,7 @@ public class ProductService(IProductClient productClient, ILogger logger) : IPro
                         continue;
                     }
 
-                    _logger.Information("Successfully updated product ID {ProductId} price from {OldPrice} to {NewPrice}", 
+                    _logger.Information("Successfully updated product ID {ProductId} price from {OldPrice} to {NewPrice}",
                         product.Id, product.Price, updatedProduct.Price);
                     updatedProducts.Add(updatedProduct);
                 }
