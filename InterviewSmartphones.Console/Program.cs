@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using InterviewSmartphones.Console.Services;
-using InterviewSmartphones.Console.Models;
+using InterviewSmartphones.Console;
 
 // Build configuration
 var configuration = new ConfigurationBuilder()
@@ -53,12 +53,7 @@ if (!getProductsResult.Success)
 }
 
 Console.WriteLine("\nTop 3 Expensive Products:");
-Console.WriteLine(new string('-', 20));
-foreach (var product in getProductsResult.Products)
-{
-    product.PrintDetails();
-    Console.WriteLine(new string('-', 20));
-}
+getProductsResult.Products.PrintDetails();
 
 // Get percentage from user
 Console.WriteLine("\nEnter percentage to increase prices:");
@@ -80,12 +75,7 @@ if (!updateResult.Success)
 }
 
 // Display updated products
-Console.WriteLine(new string('-', 20));
-foreach (var product in updateResult.UpdatedProducts)
-{
-    product.PrintDetails();
-    Console.WriteLine(new string('-', 20));
-}
+updateResult.UpdatedProducts.PrintDetails();
 
 Log.Information("Application completed successfully");
 Console.ReadKey();
