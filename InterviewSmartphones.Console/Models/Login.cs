@@ -1,25 +1,28 @@
 ﻿using System.Text.Json.Serialization;
 
-internal class LoginRequest
+namespace InterviewSmartphones.Console.Models
 {
-    [JsonPropertyName("username")]
-    public string Username { get; set; } = string.Empty;
+    public class LoginRequest
+    {
+        [JsonPropertyName("username")]
+        public string Username { get; set; } = string.Empty;
 
-    [JsonPropertyName("password")]
-    public string Password { get; set; } = string.Empty;
+        [JsonPropertyName("password")]
+        public string Password { get; set; } = string.Empty;
 
-    [JsonPropertyName("expiresInMins")]
-    public int ExpiresInMins { get; set; }
-}
+        [JsonPropertyName("expiresInMins")]
+        public int ExpiresInMins { get; set; }
+    }
 
-internal class LoginResponse
-{
-    [JsonPropertyName("accessToken")]
-    public string AccessToken { get; set; } = string.Empty;
-}
+    public class LoginResponse
+    {
+        [JsonPropertyName("accessToken")]
+        public string AccessToken { get; set; } = string.Empty;
+    }
 
-internal class LoginResult
-{
-    public string AccessToken { get; set; } = string.Empty;
-    public bool Success { get; set; }
+    public class LoginResult
+    {
+        public string AccessToken { get; set; } = string.Empty;
+        public bool Success { get; set; }
+    }
 }

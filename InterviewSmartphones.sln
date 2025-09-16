@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.36429.23
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InterviewSmartphones.Console", "InterviewSmartphones.Console\InterviewSmartphones.Console.csproj", "{B6F75DD6-4083-4337-BB5D-2EBAF3CC808E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InterviewSmartphones.Tests", "InterviewSmartphones.Tests\InterviewSmartphones.Tests.csproj", "{FEDD97B3-3E0E-8339-975B-ED43764BD545}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,18 @@ Global
 		{B6F75DD6-4083-4337-BB5D-2EBAF3CC808E}.Release|x64.Build.0 = Release|Any CPU
 		{B6F75DD6-4083-4337-BB5D-2EBAF3CC808E}.Release|x86.ActiveCfg = Release|Any CPU
 		{B6F75DD6-4083-4337-BB5D-2EBAF3CC808E}.Release|x86.Build.0 = Release|Any CPU
+		{FEDD97B3-3E0E-8339-975B-ED43764BD545}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEDD97B3-3E0E-8339-975B-ED43764BD545}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEDD97B3-3E0E-8339-975B-ED43764BD545}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FEDD97B3-3E0E-8339-975B-ED43764BD545}.Debug|x64.Build.0 = Debug|Any CPU
+		{FEDD97B3-3E0E-8339-975B-ED43764BD545}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FEDD97B3-3E0E-8339-975B-ED43764BD545}.Debug|x86.Build.0 = Debug|Any CPU
+		{FEDD97B3-3E0E-8339-975B-ED43764BD545}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEDD97B3-3E0E-8339-975B-ED43764BD545}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEDD97B3-3E0E-8339-975B-ED43764BD545}.Release|x64.ActiveCfg = Release|Any CPU
+		{FEDD97B3-3E0E-8339-975B-ED43764BD545}.Release|x64.Build.0 = Release|Any CPU
+		{FEDD97B3-3E0E-8339-975B-ED43764BD545}.Release|x86.ActiveCfg = Release|Any CPU
+		{FEDD97B3-3E0E-8339-975B-ED43764BD545}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

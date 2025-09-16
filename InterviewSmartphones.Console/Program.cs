@@ -1,13 +1,14 @@
 ﻿using System.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
 using Serilog;
+using InterviewSmartphones.Console.Services;
 
 // Build configuration
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .Build();
-
+    
 // Configure Serilog from configuration
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(configuration)
@@ -16,7 +17,11 @@ Log.Logger = new LoggerConfiguration()
 const string baseUrl = "https://dummyjson.com";
 
 using var client = new HttpClient();
-var loginService = new LoginService(client, baseUrl, Log.Logger);
+
+// Create dependencies for LoginService
+var credentialProvider = new ConsoleCredentialProvider();
+var authenticationClient = new HttpAuthenticationClient(client, baseUrl, Log.Logger);
+var loginService = new LoginService(credentialProvider, authenticationClient, Log.Logger);
 
 Log.Information("Application starting...");
 
