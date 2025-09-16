@@ -5,7 +5,7 @@ using Serilog;
 
 namespace InterviewSmartphones.Console.Services;
 
-public class HttpAuthenticationClient(HttpClient client, string baseUrl, ILogger logger) : IAuthenticationClient
+public class HttpAuthenticationClient(HttpClient client, string baseUrl, ILogger logger)
 {
     public async Task<LoginResult> AuthenticateAsync(string username, string password, int expiresInMins = 60)
     {
