@@ -1,5 +1,4 @@
 ﻿using System.Net.Http.Headers;
-using System.Numerics;
 using System.Text.Json;
 
 internal class ProductService(HttpClient client, string baseUrl)
@@ -9,23 +8,20 @@ internal class ProductService(HttpClient client, string baseUrl)
 
     public async Task<ProductsResult> GetMostExpensiveProducts(int numberOfProducts)
     {
-        Console.WriteLine("\nTop 3 Expensive Products:");
-        var productResponse = await _client.GetAsync($"{_baseUrl}/auth/products?select=title,price,brand");
-        var productJson = await productResponse.Content.ReadAsStringAsync();
+        var allProducts = await GetAllProducts();
 
-        var productList = JsonSerializer.Deserialize<ProductsResponse>(productJson);
-
-        if (productList?.Products is null || productList.Products.Count == 0)
+        if (allProducts.Count == 0)
         {
             Console.WriteLine("No products found.");
             return new ProductsResult { Success = false };
         }
 
-        var mostExpensiveProducts = productList
-            .Products
+        var mostExpensiveProducts = allProducts
+            .Where(p => p.Category == "Smartphones")
             .OrderByDescending(p => p.Price)
             .Take(numberOfProducts);
 
+        Console.WriteLine("\nTop 3 Expensive Products:");
         Console.WriteLine(new string('-', 20));
         foreach (var product in mostExpensiveProducts)
         {
@@ -38,6 +34,42 @@ internal class ProductService(HttpClient client, string baseUrl)
             Products = mostExpensiveProducts,
             Success = true
         };
+    }
+
+    private async Task<List<ProductResponse>> GetAllProducts()
+    {
+        var allProducts = new List<ProductResponse>();
+        const int limit = 30; // API limit per request
+        int skip = 0;
+
+        // First request to get the total count
+        var firstResponse = await _client.GetAsync($"{_baseUrl}/auth/products?select=title,price,brand,category&limit={limit}&skip={skip}");
+        var firstJson = await firstResponse.Content.ReadAsStringAsync();
+        var firstResult = JsonSerializer.Deserialize<ProductsResponse>(firstJson);
+
+        if (firstResult?.Products is null)
+        {
+            return allProducts;
+        }
+
+        int total = firstResult.Total;
+        allProducts.AddRange(firstResult.Products);
+
+        // Continue fetching remaining products if there are more
+        while (allProducts.Count < total)
+        {
+            skip += limit;
+            var response = await _client.GetAsync($"{_baseUrl}/auth/products?select=title,price,brand,category&limit={limit}&skip={skip}");
+            var json = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<ProductsResponse>(json);
+
+            if (result?.Products is null || result.Products.Count == 0)
+                break;
+
+            allProducts.AddRange(result.Products);
+        }
+
+        return allProducts;
     }
 
     public async Task UpdateProductPrices(IEnumerable<ProductResponse> products)

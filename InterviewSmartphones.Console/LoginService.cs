@@ -16,7 +16,7 @@ internal class LoginService(HttpClient client, string baseUrl)
         var loginRequest = new LoginRequest
         {
             Username = username!,
-            Password =password!,
+            Password = password!,
             ExpiresInMins = 60
         };
 

@@ -4,6 +4,9 @@ internal class ProductsResponse
 {
     [JsonPropertyName("products")]
     public List<ProductResponse> Products { get; set; } = [];
+
+    [JsonPropertyName("total")]
+    public int Total { get; set; }
 }
 
 internal class ProductResponse
@@ -20,6 +23,8 @@ internal class ProductResponse
     [JsonPropertyName("brand")]
     public string Brand { get; set; } = string.Empty;
 
+    [JsonPropertyName("category")]
+    public string Category { get; internal set; } = string.Empty;
 }
 
 internal class ProductsResult
