@@ -27,4 +27,4 @@ if (!getProductsResult.Success)
 
 await productService.UpdateProductPrices(getProductsResult.Products);
 
-Console.Read();
+Console.ReadKey();

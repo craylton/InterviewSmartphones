@@ -9,8 +9,8 @@ internal class ProductService(HttpClient client, string baseUrl)
 
     public async Task<ProductsResult> GetMostExpensiveProducts(int numberOfProducts)
     {
-        Console.WriteLine("\nTop 3 Expensive Smartphones:");
-        var productResponse = await _client.GetAsync($"{_baseUrl}/auth/products");
+        Console.WriteLine("\nTop 3 Expensive Products:");
+        var productResponse = await _client.GetAsync($"{_baseUrl}/auth/products?select=title,price,brand");
         var productJson = await productResponse.Content.ReadAsStringAsync();
 
         var productList = JsonSerializer.Deserialize<ProductsResponse>(productJson);
@@ -27,12 +27,9 @@ internal class ProductService(HttpClient client, string baseUrl)
             .Take(numberOfProducts);
 
         Console.WriteLine(new string('-', 20));
-
         foreach (var product in mostExpensiveProducts)
         {
-            Console.WriteLine($"Brand: {product.Brand}");
-            Console.WriteLine($"Title: {product.Title}");
-            Console.WriteLine($"Price: ${product.Price}");
+            product.PrintDetails();
             Console.WriteLine(new string('-', 20));
         }
 
@@ -75,9 +72,7 @@ internal class ProductService(HttpClient client, string baseUrl)
                 continue;
             }
 
-            Console.WriteLine($"Brand: {updatedProduct.Brand}");
-            Console.WriteLine($"Title: {updatedProduct.Title}");
-            Console.WriteLine($"Price: ${updatedProduct.Price}");
+            updatedProduct.PrintDetails();
             Console.WriteLine(new string('-', 20));
         }
     }
