@@ -43,50 +43,51 @@ public class ProductService(IProductClient productClient, ILogger logger) : IPro
         }
     }
 
-    public async Task UpdateProductPrices(IEnumerable<ProductResponse> products)
+    public async Task<UpdateResult> UpdateProductPrices(IEnumerable<ProductResponse> products, decimal percentageIncrease)
     {
-        _logger.Information("Starting price update process");
+        _logger.Information("Starting price update process with {Percentage}% increase", percentageIncrease);
 
-        System.Console.WriteLine("\nEnter percentage to increase prices:");
-        var percentStr = System.Console.ReadLine();
-        if (!decimal.TryParse(percentStr, out decimal percent))
-        {
-            _logger.Warning("Invalid percentage entered: {Percentage}", percentStr);
-            System.Console.WriteLine("Invalid percentage.");
-            return;
-        }
-
-        _logger.Information("Updating prices with {Percentage}% increase", percent);
-        System.Console.WriteLine(new string('-', 20));
-
+        var updatedProducts = new List<ProductResponse>();
         var productsList = products.ToList();
 
-        foreach (var product in productsList)
+        try
         {
-            decimal newPrice = Math.Round(product.Price * (1 + percent / 100), 2);
-
-            try
+            foreach (var product in productsList)
             {
-                var updatedProduct = await _productClient.UpdateProductPriceAsync(product.Id, newPrice);
+                decimal newPrice = Math.Round(product.Price * (1 + percentageIncrease / 100), 2);
 
-                if (updatedProduct is null)
+                try
                 {
-                    _logger.Warning("Failed to update product ID {ProductId} - null response", product.Id);
-                    System.Console.WriteLine($"Failed to update product ID {product.Id}");
-                    continue;
+                    var updatedProduct = await _productClient.UpdateProductPriceAsync(product.Id, newPrice);
+
+                    if (updatedProduct is null)
+                    {
+                        _logger.Warning("Failed to update product ID {ProductId} - null response", product.Id);
+                        continue;
+                    }
+
+                    _logger.Information("Successfully updated product ID {ProductId} price from {OldPrice} to {NewPrice}", 
+                        product.Id, product.Price, updatedProduct.Price);
+                    updatedProducts.Add(updatedProduct);
                 }
-
-                _logger.Information("Successfully updated product ID {ProductId} price to {NewPrice}", product.Id, updatedProduct.Price);
-                updatedProduct.PrintDetails();
-                System.Console.WriteLine(new string('-', 20));
+                catch (Exception ex)
+                {
+                    _logger.Error(ex, "Exception occurred while updating product ID {ProductId}", product.Id);
+                    throw; // Re-throw to be caught by outer try-catch
+                }
             }
-            catch (Exception ex)
+
+            _logger.Information("Price update completed successfully. Updated {Count} products", updatedProducts.Count);
+            return new UpdateResult
             {
-                _logger.Error(ex, "Exception occurred while updating product ID {ProductId}", product.Id);
-                System.Console.WriteLine($"Error updating product ID {product.Id}");
-            }
+                UpdatedProducts = updatedProducts,
+                Success = true
+            };
         }
-
-        _logger.Information("Price update completed.");
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Error occurred during price update process");
+            return new UpdateResult { Success = false };
+        }
     }
 }

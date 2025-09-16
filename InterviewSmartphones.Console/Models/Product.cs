@@ -34,3 +34,9 @@ public class ProductsResult
     public IEnumerable<ProductResponse> Products { get; set; } = [];
     public bool Success { get; set; }
 }
+
+public class UpdateResult
+{
+    public IEnumerable<ProductResponse> UpdatedProducts { get; set; } = [];
+    public bool Success { get; set; }
+}

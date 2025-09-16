@@ -57,7 +57,32 @@ foreach (var product in getProductsResult.Products)
     Console.WriteLine(new string('-', 20));
 }
 
-await productService.UpdateProductPrices(getProductsResult.Products);
+// Get percentage from user
+System.Console.WriteLine("\nEnter percentage to increase prices:");
+var percentStr = System.Console.ReadLine();
+if (!decimal.TryParse(percentStr, out decimal percent))
+{
+    Log.Warning("Invalid percentage entered: {Percentage}", percentStr);
+    System.Console.WriteLine("Invalid percentage.");
+    return;
+}
+
+var updateResult = await productService.UpdateProductPrices(getProductsResult.Products, percent);
+
+if (!updateResult.Success)
+{
+    Log.Error("Failed to update product prices.");
+    System.Console.WriteLine("Failed to update product prices.");
+    return;
+}
+
+// Display updated products
+System.Console.WriteLine(new string('-', 20));
+foreach (var product in updateResult.UpdatedProducts)
+{
+    product.PrintDetails();
+    System.Console.WriteLine(new string('-', 20));
+}
 
 Log.Information("Application completed successfully");
 Console.ReadKey();

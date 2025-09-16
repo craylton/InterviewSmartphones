@@ -72,7 +72,7 @@ public class HttpProductClient(HttpClient client, string baseUrl, ILogger logger
         }
     }
 
-    public async Task<ProductResponse?> UpdateProductPriceAsync(int productId, decimal newPrice)
+    public async Task<ProductResponse> UpdateProductPriceAsync(int productId, decimal newPrice)
     {
         var updatePayload = new ProductUpdate { Price = newPrice };
 
@@ -85,6 +85,13 @@ public class HttpProductClient(HttpClient client, string baseUrl, ILogger logger
             var updateJson = await updateResponse.Content.ReadAsStringAsync();
 
             var updatedProduct = JsonSerializer.Deserialize<ProductResponse>(updateJson);
+
+            if (updatedProduct is null)
+            {
+                logger.Warning("Update response returned null for product ID {ProductId}", productId);
+                throw new Exception("Failed to deserialize updated product");
+            }
+            logger.Information("Successfully updated product ID {ProductId} to new price {NewPrice}", productId, updatedProduct.Price);
             return updatedProduct;
         }
         catch (Exception ex)
