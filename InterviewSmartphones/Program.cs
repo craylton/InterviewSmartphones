@@ -1,47 +1,30 @@
-using InterviewSmartphones.Services;
 using Serilog;
+
+var builder = WebApplication.CreateBuilder(args);
 
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
-    .WriteTo.File("logs/app-.txt", rollingInterval: RollingInterval.Day)
+    .WriteTo.File("log.txt", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Add Serilog
 builder.Host.UseSerilog();
 
-// Add services to the container.
+// Add services
 builder.Services.AddControllers();
+builder.Services.AddHttpClient();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add HTTP client for DummyJSON service
-builder.Services.AddHttpClient<IDummyJsonService, DummyJsonService>();
-builder.Services.AddScoped<IDummyJsonService, DummyJsonService>();
-
-// Add CORS for React frontend
-builder.Services.AddCors(options =>
+// Add configuration for base URL
+builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
 {
-    options.AddPolicy("AllowReactApp", policy =>
-    {
-        policy.WithOrigins("http://localhost:3000", "https://localhost:3000")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
-    });
-});
-
-// Add SPA services for React
-builder.Services.AddSpaStaticFiles(configuration =>
-{
-    configuration.RootPath = "../web/ClientApp/build";
+    {"BaseUrl", "https://dummyjson.com"}
 });
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -49,36 +32,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-app.UseCors("AllowReactApp");
-
-app.UseRouting();
 app.UseAuthorization();
-
 app.MapControllers();
 
-// Configure SPA
-app.UseSpaStaticFiles();
-app.UseSpa(spa =>
-{
-    spa.Options.SourcePath = "../web/ClientApp";
-
-    if (app.Environment.IsDevelopment())
-    {
-        spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
-    }
-});
-
-try
-{
-    Log.Information("Starting web application");
-    app.Run();
-}
-catch (Exception ex)
-{
-    Log.Fatal(ex, "Application terminated unexpectedly");
-}
-finally
-{
-    Log.CloseAndFlush();
-}
+app.Run();
