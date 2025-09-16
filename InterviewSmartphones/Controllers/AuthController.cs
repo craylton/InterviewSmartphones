@@ -1,67 +1,69 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Headers;
+using System.Text.Json;
 using InterviewSmartphones.Models;
-using InterviewSmartphones.Services;
 
-namespace InterviewSmartphones.Controllers
+namespace InterviewSmartphones.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class AuthController(
+    IHttpClientFactory httpClientFactory,
+    IConfiguration configuration,
+    ILogger<AuthController> logger) : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class AuthController : ControllerBase
+    private readonly string _baseUrl = configuration["BaseUrl"] ?? "https://dummyjson.com";
+    private readonly HttpClient _httpClient = httpClientFactory.CreateClient();
+    private readonly ILogger<AuthController> _logger = logger;
+
+    [HttpPost("login")]
+    public async Task<ActionResult<AuthResponse>> Login([FromBody] LoginRequest request)
     {
-        private readonly IDummyJsonService _dummyJsonService;
-        private readonly ILogger<AuthController> _logger;
-
-        public AuthController(IDummyJsonService dummyJsonService, ILogger<AuthController> logger)
+        if (string.IsNullOrEmpty(request.Username) || string.IsNullOrEmpty(request.Password))
         {
-            _dummyJsonService = dummyJsonService;
-            _logger = logger;
+            return BadRequest("Username and password are required");
         }
 
-        [HttpPost("login")]
-        public async Task<ActionResult<ApiResponse<LoginResponse>>> Login([FromBody] LoginRequest loginRequest)
+        var loginPayload = new
         {
-            if (string.IsNullOrWhiteSpace(loginRequest.Username) || string.IsNullOrWhiteSpace(loginRequest.Password))
+            username = request.Username,
+            password = request.Password,
+            expiresInMins = 60
+        };
+
+        var loginContent = new StringContent(JsonSerializer.Serialize(loginPayload));
+        loginContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+        _logger.LogInformation("Sending login request...");
+
+        try
+        {
+            var loginResponse = await _httpClient.PostAsync($"{_baseUrl}/auth/login", loginContent);
+            var loginResponseBody = await loginResponse.Content.ReadAsStringAsync();
+
+            _logger.LogInformation($"Login Status Code: {loginResponse.StatusCode}");
+            _logger.LogInformation($"Login Response Body: {loginResponseBody}");
+
+            if (!loginResponse.IsSuccessStatusCode)
             {
-                _logger.LogWarning("Login attempt with missing credentials");
-                return BadRequest(new ApiResponse<LoginResponse>
-                {
-                    Success = false,
-                    Message = "Username and password are required",
-                    Errors = new List<string> { "Invalid credentials provided" }
-                });
+                _logger.LogError("Login failed.");
+                return Unauthorized("Login failed");
             }
 
-            _logger.LogInformation("Login attempt for user: {Username}", loginRequest.Username);
-            
-            var result = await _dummyJsonService.LoginAsync(loginRequest);
-            
-            if (result.Success)
+            var loginResult = JsonSerializer.Deserialize<AuthResponse>(loginResponseBody);
+
+            if (loginResult?.AccessToken == null)
             {
-                _logger.LogInformation("Successful login for user: {Username}", loginRequest.Username);
-                return Ok(result);
+                _logger.LogError("Invalid response from authentication server.");
+                return BadRequest("Invalid response from authentication server");
             }
-            else
-            {
-                _logger.LogWarning("Failed login attempt for user: {Username}", loginRequest.Username);
-                return Unauthorized(result);
-            }
+
+            return Ok(loginResult);
         }
-
-        [HttpGet("users")]
-        public async Task<ActionResult<ApiResponse<List<User>>>> GetUsers()
+        catch (Exception ex)
         {
-            _logger.LogInformation("Fetching users list");
-            
-            var result = await _dummyJsonService.GetUsersAsync();
-            
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            else
-            {
-                return BadRequest(result);
-            }
+            _logger.LogError(ex, "Error during authentication");
+            return StatusCode(500, "Internal server error during authentication");
         }
     }
 }
