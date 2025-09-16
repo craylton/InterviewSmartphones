@@ -25,4 +25,6 @@ if (!getProductsResult.Success)
     return;
 }
 
-// Ask the user for a percentage to increase the prices
+await productService.UpdateProductPrices(getProductsResult.Products);
+
+Console.Read();
