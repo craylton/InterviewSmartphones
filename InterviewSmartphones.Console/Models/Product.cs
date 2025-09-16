@@ -1,6 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-internal class ProductsResponse
+namespace InterviewSmartphones.Console.Models;
+
+public class ProductsResponse
 {
     [JsonPropertyName("products")]
     public List<ProductResponse> Products { get; set; } = [];
@@ -9,7 +11,7 @@ internal class ProductsResponse
     public int Total { get; set; }
 }
 
-internal class ProductResponse
+public class ProductResponse
 {
     [JsonPropertyName("id")]
     public int Id { get; set; }
@@ -27,7 +29,7 @@ internal class ProductResponse
     public string Category { get; set; } = string.Empty;
 }
 
-internal class ProductsResult
+public class ProductsResult
 {
     public IEnumerable<ProductResponse> Products { get; set; } = [];
     public bool Success { get; set; }

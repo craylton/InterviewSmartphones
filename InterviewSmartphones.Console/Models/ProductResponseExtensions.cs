@@ -1,9 +1,11 @@
-﻿internal static class ProductResponseExtensions
+﻿namespace InterviewSmartphones.Console.Models;
+
+public static class ProductResponseExtensions
 {
     public static void PrintDetails(this ProductResponse product)
     {
-        Console.WriteLine($"Brand: {product.Brand}");
-        Console.WriteLine($"Title: {product.Title}");
-        Console.WriteLine($"Price: ${product.Price}");
+        System.Console.WriteLine($"Brand: {product.Brand}");
+        System.Console.WriteLine($"Title: {product.Title}");
+        System.Console.WriteLine($"Price: ${product.Price}");
     }
 }

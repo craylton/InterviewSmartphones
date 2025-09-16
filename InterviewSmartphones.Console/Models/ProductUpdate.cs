@@ -1,7 +1,8 @@
-﻿
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
-internal class ProductUpdate
+namespace InterviewSmartphones.Console.Models;
+
+public class ProductUpdate
 {
     [JsonPropertyName("price")]
     public decimal Price { get; set; }
