@@ -24,11 +24,11 @@ internal class ProductResponse
     public string Brand { get; set; } = string.Empty;
 
     [JsonPropertyName("category")]
-    public string Category { get; internal set; } = string.Empty;
+    public string Category { get; set; } = string.Empty;
 }
 
 internal class ProductsResult
 {
-    public IEnumerable<ProductResponse> Products { get; set; }
+    public IEnumerable<ProductResponse> Products { get; set; } = [];
     public bool Success { get; set; }
 }

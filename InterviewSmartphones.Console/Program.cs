@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 
 const string baseUrl = "https://dummyjson.com";
 
@@ -16,11 +15,9 @@ if (!loginResult.Success)
 
 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResult.AccessToken);
 
-//var a = await client.GetAsync($"{baseUrl}/auth/products/categories");
-//var b = await a.Content.ReadAsStringAsync();
 var productService = new ProductService(client, baseUrl);
 
-var getProductsResult = await productService.GetMostExpensiveProducts(3);
+var getProductsResult = await productService.GetMostExpensiveProducts("smartphones", 3);
 
 if (!getProductsResult.Success)
 {

@@ -6,7 +6,7 @@ internal class ProductService(HttpClient client, string baseUrl)
     private readonly HttpClient _client = client;
     private readonly string _baseUrl = baseUrl;
 
-    public async Task<ProductsResult> GetMostExpensiveProducts(int numberOfProducts)
+    public async Task<ProductsResult> GetMostExpensiveProducts(string category, int numberOfProducts)
     {
         var allProducts = await GetAllProducts();
 
@@ -17,7 +17,7 @@ internal class ProductService(HttpClient client, string baseUrl)
         }
 
         var mostExpensiveProducts = allProducts
-            .Where(p => p.Category == "Smartphones")
+            .Where(p => p.Category == category)
             .OrderByDescending(p => p.Price)
             .Take(numberOfProducts);
 
