@@ -1,0 +1,6 @@
+More stuff I could do with this...
+
+Move services into a separate project
+Separate bootstrapping logic (logging) from application logic
+Tests for limit/skip logic
+Maybe some tests for edge cases
